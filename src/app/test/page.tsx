@@ -15,11 +15,29 @@ export default function ShortcutExampleHook() {
 
   // Sử dụng hook useErrorDialog để quản lý dialog lỗi
   // Trả về các state và method để hiển thị dialog lỗi
-  // const { open, type, message, details, showError, hideError } = useErrorDialog();
+  const errorDialog = useErrorDialog();
+  const notifyDialog = useNotifyDialog();
+
+  // tái cấu trúc các biến từ errorDialog và notifyDialog để tránh xung đột việc lặp tên tham số
   const {
-    open, type, title, message, primaryActionText,
-    showNotify, hideNotify, handlePrimaryAction
-  } = useNotifyDialog();
+    open: errorOpen,
+    type: errorType,
+    message: errorMessage,
+    details,
+    showError,
+    hideError,
+  } = errorDialog;
+
+  const {
+    open: open,
+    type: type,
+    title,
+    message,
+    primaryActionText,
+    showNotify,
+    hideNotify,
+    handlePrimaryAction,
+  } = notifyDialog;
 
   const increment = () => setCount((prev) => prev + 1);
 
@@ -30,7 +48,7 @@ export default function ShortcutExampleHook() {
     // await showError(ErrorType.AccessForbidden, ErrorMessages[ErrorType.AccessForbidden], "Chi tiết lỗi: Bạn không có quyền truy cập vào tài nguyên này.");
 
     // Ví dụ sử dụng showNotify để hiển thị thông báo
-    // await showNotify({ type: NotifyType.Info, message: "Đây là thông báo kiểu Info." });
+    await showNotify({ type: NotifyType.Warning, message: "Đây là thông báo kiểu Info." });
 
     // Ví dụ sử dụng showNotify với các tùy chọn khác
     // Truyền vào type, message, title, primaryActionText và onPrimaryAction
@@ -59,25 +77,25 @@ export default function ShortcutExampleHook() {
       <p>Press Cmd+K (Mac) hoặc Ctrl+K (Windows) → count: {count}</p>
 
       {/* Hiển thị Dialog lỗi */}
-      {/* <ErrorDialog
-        open={open}
-        type={type}
-        message={message}
-        onClose={hideError}
-        detail={details}
-      /> */}
+      <ErrorDialog
+        open={errorDialog.open}
+        type={errorDialog.type}
+        message={errorDialog.message}
+        onClose={errorDialog.hideError}
+        detail={errorDialog.details}
+      />
 
       <NotifyDialog
-        open={open}
-        type={type}
-        title={title}
-        message={message}
+        open={notifyDialog.open}
+        type={notifyDialog.type}
+        title={notifyDialog.title}
+        message={notifyDialog.message}
 
         // primary action và onPrimaryAction là tùy chọn
-        primaryActionText={primaryActionText}
-        onPrimaryAction={handlePrimaryAction}
+        primaryActionText={notifyDialog.primaryActionText}
+        onPrimaryAction={notifyDialog.handlePrimaryAction}
 
-        onClose={hideNotify}
+        onClose={notifyDialog.hideNotify}
       />
     </div>
   );
